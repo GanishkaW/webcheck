@@ -1,0 +1,98 @@
+openapi: 3.0.3
+info:
+  title: Website Analysis Service
+  description: >
+    This is a compliance application written in Node.js.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Choreo
+  url: https://choreo.dev
+servers:
+  - url: http://localhost:8000
+tags:
+  - name: pages
+    description: API for analyzing linked pages
+  - name: ssl
+    description: API for retrieving SSL certificate information
+paths:
+  /linked-pages:
+    get:
+      summary: Analyze linked pages
+      operationId: setLinkedPages
+      parameters:
+        - name: url
+          in: query
+          description: The URL of the website to analyze linked pages for.
+          required: true
+          schema:
+            type: string
+            format: uri
+      tags:
+        - pages
+      responses:
+        "200":
+          description: Successfully retrieved linked pages.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  internal:
+                    type: array
+                    items:
+                      type: string
+                  external:
+                    type: array
+                    items:
+                      type: string
+                  skipped:
+                    type: string
+                    nullable: true
+        "400":
+          description: Invalid URL provided.
+        "500":
+          description: Internal server error.
+
+  /ssl:
+    get:
+      summary: Retrieve SSL certificate information of a website
+      operationId: setSSL
+      parameters:
+        - name: url
+          in: query
+          description: The URL of the website to fetch the SSL certificate information for.
+          required: true
+          schema:
+            type: string
+            format: uri
+      tags:
+        - ssl
+      responses:
+        "200":
+          description: SSL certificate retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subject:
+                    type: string
+                  issuer:
+                    type: string
+                  validFrom:
+                    type: string
+                    format: date-time
+                  validTo:
+                    type: string
+                    format: date-time
+                  serialNumber:
+                    type: string
+                  sha1Fingerprint:
+                    type: string
+        "400":
+          description: Invalid URL format.
+        "500":
+          description: Server error.
